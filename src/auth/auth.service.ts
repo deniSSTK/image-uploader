@@ -65,6 +65,7 @@ export class AuthService {
       throw new UnauthorizedException('User data not found');
     }
 
+    this.logger.log('User login successfully ', { userId: user.id });
     return user;
   }
 }
