@@ -27,4 +27,20 @@ export class AuthRepository {
       },
     });
   }
+
+  async getPasswordByEmail(email: string): Promise<string | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { passwordHash: true },
+    });
+
+    return user?.passwordHash ?? null;
+  }
+
+  async getAuthUserByEmail(email: string): Promise<AuthenticatedUser | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, role: true },
+    });
+  }
 }

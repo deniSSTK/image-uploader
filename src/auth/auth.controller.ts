@@ -2,8 +2,14 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterReqDto } from './dto/request/register-req.dto';
 import { TokenService } from './token/token.service';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RegisterResDto } from './dto/response/register-res.dto';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { TokensResDto } from './dto/response/tokens-res.dto';
+import { LoginReqDto } from './dto/request/login-req.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -21,11 +27,27 @@ export class AuthController {
       'Creates a new user account and returns access and refresh tokens',
   })
   @ApiCreatedResponse({
-    type: RegisterResDto,
+    type: TokensResDto,
     description: 'User successfully registered',
   })
   async register(@Body() dto: RegisterReqDto) {
     const user = await this.authService.register(dto);
+
+    return {
+      accessToken: this.tokenService.generateAccessToken(user),
+      refreshToken: await this.tokenService.generateRefreshToken(user),
+    };
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: TokensResDto,
+    description: 'User successfully logged in',
+  })
+  @ApiOperation({ summary: 'Login for a user' })
+  async login(@Body() dto: LoginReqDto) {
+    const user = await this.authService.login(dto);
 
     return {
       accessToken: this.tokenService.generateAccessToken(user),
