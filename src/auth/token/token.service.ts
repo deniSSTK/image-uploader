@@ -4,6 +4,7 @@ import { ConfigService } from '../../core/config/config.service';
 import { TokenRepository } from './token.repository';
 import ms, { StringValue } from 'ms';
 import { AuthenticatedUser } from '../dto/auth-user.dto';
+import { TokensResDto } from '../dto/response/tokens-res.dto';
 
 @Injectable()
 export class TokenService {
@@ -35,6 +36,13 @@ export class TokenService {
     await this.tokenRepository.saveRefreshTokenToDb(actor.id, token, expiresAt);
 
     return token;
+  }
+
+  async generateBothTokens(user: AuthenticatedUser): Promise<TokensResDto> {
+    return {
+      accessToken: this.generateAccessToken(user),
+      refreshToken: await this.generateRefreshToken(user),
+    };
   }
 
   private createToken(

@@ -33,10 +33,7 @@ export class AuthController {
   async register(@Body() dto: RegisterReqDto) {
     const user = await this.authService.register(dto);
 
-    return {
-      accessToken: this.tokenService.generateAccessToken(user),
-      refreshToken: await this.tokenService.generateRefreshToken(user),
-    };
+    return this.tokenService.generateBothTokens(user);
   }
 
   @Post('login')
@@ -49,9 +46,6 @@ export class AuthController {
   async login(@Body() dto: LoginReqDto) {
     const user = await this.authService.login(dto);
 
-    return {
-      accessToken: this.tokenService.generateAccessToken(user),
-      refreshToken: await this.tokenService.generateRefreshToken(user),
-    };
+    return this.tokenService.generateBothTokens(user);
   }
 }
