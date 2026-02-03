@@ -17,6 +17,11 @@ model User {
   tokens       RefreshToken[]
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model RefreshToken {
   id     String @id @default(uuid())
   userId String
@@ -30,9 +35,4 @@ model RefreshToken {
   createdAt DateTime @default(now())
 
   @@index([userId])
-}
-
-enum UserRole {
-  USER
-  ADMIN
 }
