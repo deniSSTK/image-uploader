@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterReqDto } from './dto/request/register-req.dto';
+import { AccountReqDto } from './dto/request/account-req.dto';
 import { TokenService } from './token/token.service';
 import {
   ApiCreatedResponse,
@@ -9,7 +9,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { TokensResDto } from './dto/response/tokens-res.dto';
-import { LoginReqDto } from './dto/request/login-req.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -30,10 +29,10 @@ export class AuthController {
     type: TokensResDto,
     description: 'User successfully registered',
   })
-  async register(@Body() dto: RegisterReqDto) {
+  async register(@Body() dto: AccountReqDto) {
     const user = await this.authService.register(dto);
 
-    return this.tokenService.generateBothTokens(user);
+    return this.tokenService.generateBothTokens(user, dto.deviceId);
   }
 
   @Post('login')
@@ -43,9 +42,9 @@ export class AuthController {
     description: 'User successfully logged in',
   })
   @ApiOperation({ summary: 'Login for a user' })
-  async login(@Body() dto: LoginReqDto) {
+  async login(@Body() dto: AccountReqDto) {
     const user = await this.authService.login(dto);
 
-    return this.tokenService.generateBothTokens(user);
+    return this.tokenService.generateBothTokens(user, dto.deviceId);
   }
 }

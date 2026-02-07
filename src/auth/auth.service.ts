@@ -5,9 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
-import { RegisterReqDto } from './dto/request/register-req.dto';
+import { AccountReqDto } from './dto/request/account-req.dto';
 import * as bcrypt from 'bcrypt';
-import { LoginReqDto } from './dto/request/login-req.dto';
 import { AuthenticatedUser } from './dto/auth-user.dto';
 
 @Injectable()
@@ -16,7 +15,7 @@ export class AuthService {
 
   constructor(private readonly authRepository: AuthRepository) {}
 
-  async register(dto: RegisterReqDto) {
+  async register(dto: AccountReqDto) {
     this.logger.log('Register new user account', { email: dto.email });
 
     const emailExists = await this.authRepository.IsEmailExists(dto.email);
@@ -41,7 +40,7 @@ export class AuthService {
     return user;
   }
 
-  async login(dto: LoginReqDto): Promise<AuthenticatedUser> {
+  async login(dto: AccountReqDto): Promise<AuthenticatedUser> {
     this.logger.log('Attempt to login user', { email: dto.email });
 
     const passwordHash = await this.authRepository.getPasswordByEmail(
